@@ -19,7 +19,7 @@ env = environ.Env(
     CHAT_PW = (str, '')
 )
 
-BASE_DIR = Path(__file__).resolve()
+BASE_DIR = Path(__file__).resolve().parent
 env.read_env(os.path.join(BASE_DIR, '.env','.env'))
 
 
@@ -38,7 +38,6 @@ SCOPES = env.list('SCOPES')
 BOT_TOKEN = env.str('BOT_TOKEN')
 CHAT_IDS = env.list('CHAT_IDS')
 CHAT_PW = env.str('CHAT_PW')
-
 
 
 LOGGING = {
