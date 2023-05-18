@@ -2,11 +2,12 @@ import environ
 import os
 import sys
 from pathlib import Path
+import logging.config
 
 # default env vals
 env = environ.Env(
     DEBUG = (bool, False),
-    LOG_FILE = (str, "logs/status.log"),
+    LOG_FILE = (str, 'logs/trashbot.log'),
     LOG_LVL = (str, 'INFO'),
 
     GMAIL_CREDENTIALS_FILE = (str, ''),
@@ -19,8 +20,12 @@ env = environ.Env(
     CHAT_PW = (str, '')
 )
 
-BASE_DIR = Path(__file__).resolve().parent
+BASE_DIR = Path(__file__).resolve().parent.parent
 env.read_env(os.path.join(BASE_DIR, '.env','.env'))
+
+# General settings
+LOG_LVL = env.str('LOG_LVL')
+LOG_FILE = env.str('LOG_FILE')
 
 
 # GMAIL credentials + settings
@@ -66,21 +71,24 @@ LOGGING = {
         'file': {
             'level': 'INFO',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': env.str('LOG_FILE'),
+            'filename': LOG_FILE,
             'formatter': 'formatter_json',
             'maxBytes': 5270000,
             'backupCount': 1
         }
     },
-    'root': {
-        'handlers': ['console'],
-        'level': 'WARNING'
-    },
-    'loggers': {
+    'loggers': { 
         '': {
-            'handlers': ['console'],
-            'level': env.str('LOG_LVL'),
+            'handlers': ['console', 'file'],
+            'level': 'WARNING',
             'propagate': False
+        },
+        'bot': {
+            'handlers': ['console', 'file'],
+            'level': LOG_LVL,
+            'propagate': True
         }
     }
 }
+
+logging.config.dictConfig(LOGGING)
